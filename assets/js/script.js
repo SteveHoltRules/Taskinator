@@ -2,9 +2,13 @@ var buttonEl = document.querySelector("#save-task");
 // console.log(buttonE1);
 var formEl = document.querySelector("#task-form");
 var tasksToDoEl = document.querySelector("#tasks-to-do");
+var pageContentEl = document.querySelector("#page-content");
+var taskIdCounter = 0;
 
 var taskFormHandler = function (event) {
+  console.log("in taskFormHandler");
   event.preventDefault();
+  //Ask about the Input name format here
   var taskNameInput = document.querySelector("input[name='task-name']").value;
   console.log(taskNameInput);
   var taskTypeInput = document.querySelector("select[name='task-type']").value;
@@ -27,6 +31,7 @@ var taskFormHandler = function (event) {
 }
 
 var createTaskEl = function (taskDataObj) {
+  console.log("in createTaskEl")
   var listItemEl = document.createElement("li");
   listItemEl.className = "task-item";
 
@@ -42,10 +47,14 @@ var createTaskEl = function (taskDataObj) {
   //append the list task info that was input by the customer
   listItemEl.appendChild(taskInfoEl);
 
+  //Calling the function creatTaskActions
   var taskActionsEl = createTaskActions(taskIdCounter);
   console.log(taskActionsEl);
 
+  //Taking the called Function and appending the containers to the task
+  listItemEl.appendChild(taskActionsEl);
   //add entire list item to list
+  //What is happening here? Taking hte tasksToDoElement and appending the listItem Elements
   tasksToDoEl.appendChild(listItemEl);
 
   //increase task counter for next unique id
@@ -54,9 +63,9 @@ var createTaskEl = function (taskDataObj) {
 
 //Create task action
 var createTaskActions = function (taskId) {
+  console.log("in createTaskActions");
   var actionContainerEl = document.createElement("div");
   actionContainerEl.className = "task-actions";
-
 
   //Create edit button
   var editButtonEl = document.createElement("button");
@@ -69,6 +78,7 @@ var createTaskActions = function (taskId) {
   //Create delete button
   var deleteButtonEl = document.createElement("button");
   deleteButtonEl.textContent = "Delete";
+  //Is this class name split, what does this do? 
   deleteButtonEl.className = "btn delete-btn";
   deleteButtonEl.setAttribute("data-task-id", taskId);
 
@@ -96,6 +106,30 @@ var createTaskActions = function (taskId) {
   return actionContainerEl;
 }
 
+//Event is the name for what is happening - in this case, the event is a "click"
+//This only reveals the event in the page content because it is only referenced in main
+var taskButtonHandler = function(event) {
+  console.log(event.target);
+
+  if (event.target.matches(".delete-btn")) {
+    // get the element's task id
+    var taskId = event.target.getAttribute("data-task-id");
+    console.log(taskId);
+  }
+
+  if (event.target.matches(".delete-btn")) {
+    var taskId = event.target.getAttribute("data-task-id");
+    deleteTask(taskId);
+  }
+
+}
+
+var deleteTask = function(taskId) {
+  console.log(taskId);
+  var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+  console.log(taskSelected);
+  taskSelected.remove();
+}
+
 formEl.addEventListener("submit", taskFormHandler);
-formEl.addEventListener("submit", createTaskEl);
-formEl.addEventListener("submit", createTaskActions);
+pageContentEl.addEventListener("click", taskButtonHandler);
